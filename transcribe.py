@@ -68,7 +68,7 @@ def write_header(is_empty=False):
 
 def audio_transcriber(whisper, model, language, tempo):
     start_position = 44 # without header
-    previous_txt_len = 0
+    previous_text_line_len = 0
     while True:
         threading.Event().wait(tempo)
         with lock:
@@ -98,9 +98,12 @@ def audio_transcriber(whisper, model, language, tempo):
 
         text = result['segments'][0]['text']
         text_line = f"\r>>>>{text}"
-        sys.stdout.write(text_line)
+        padding = ' '* max(previous_text_line_len-len(text_line),0)
+        sys.stdout.write(text_line+padding)
+        previous_text_line_len = len(text_line)
         sys.stdout.flush()
         if len(result['segments']) > 1:
+            previous_text_line_len = 0
             print(flush=True)
             start_position += sec_to_bytes(result['segments'][1]['start'])
             #print("start_position="+str(start_position))
