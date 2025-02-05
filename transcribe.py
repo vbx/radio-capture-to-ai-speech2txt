@@ -97,7 +97,8 @@ def audio_transcriber(whisper, model, language, tempo):
             )
 
         text = result['segments'][0]['text']
-        sys.stdout.write(f"\r>>>>{text}")
+        text_line = f"\r>>>>{text}"
+        sys.stdout.write(text_line)
         sys.stdout.flush()
         if len(result['segments']) > 1:
             print(flush=True)
